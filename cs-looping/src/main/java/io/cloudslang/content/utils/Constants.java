@@ -6,18 +6,11 @@ package io.cloudslang.content.utils;
 public class Constants {
 
     public static final String DEFAULT_DELIMITER = ",";
-    public static final String EMPTY_STRING = "";
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
 
     public static final class OutputNames {
         public static final String RETURN_RESULT = "returnResult";
         public static final String RETURN_CODE = "returnCode";
-        public static final String RESPONSE_TEXT = "response";
-        public static final String EXCEPTION = "exception";
         public static final String RESPONSE = "response";
-
-        public static final String RESULT_TEXT = "result";
     }
 
     public static final class ResponseNames {
@@ -30,4 +23,11 @@ public class Constants {
         public static final String RETURN_CODE_FAILURE = "-1";
         public static final String RETURN_CODE_SUCCESS = "0";
     }
+
+    public static final class InputNames {
+        public static final String LIST = "list";
+        public static final String DELIMITER = "delimiter";
+        public static final String SESSION_ITERATOR = "sessionIterator";
+    }
+
 }

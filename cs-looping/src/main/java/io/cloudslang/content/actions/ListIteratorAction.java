@@ -16,16 +16,14 @@ import java.util.Map;
 
 import static io.cloudslang.content.utils.Constants.OutputNames.*;
 import static io.cloudslang.content.utils.Constants.ResponseNames.*;
-import static io.cloudslang.content.utils.Constants.ReturnCodes.RETURN_CODE_FAILURE;
-import static io.cloudslang.content.utils.Constants.ReturnCodes.RETURN_CODE_SUCCESS;
+import static io.cloudslang.content.utils.Constants.InputNames.*;
+import static io.cloudslang.content.utils.Constants.ReturnCodes.*;
 
 /**
  * Created by ursan on 7/28/2016.
  */
 public class ListIteratorAction {
-    private static final String LIST = "list";
-    private static final String DELIMITER = "delimiter";
-    private static final String SESSION_ITERATOR = "sessionIterator";
+
     @Action(name = "Iterator",
             outputs = {
                     @Output(RESPONSE),
@@ -37,12 +35,11 @@ public class ListIteratorAction {
                     @Response(text = FAILURE, field = RETURN_RESULT, value = RETURN_CODE_FAILURE, matchType = MatchType.COMPARE_EQUAL, isDefault = true, isOnFail = true)})
     public Map<String, String> listIterator(@Param(value = LIST,  required = true) String list,
                                             @Param(value = DELIMITER, required = true) String delimiter,
-                                            @Param(value = "sessionIterator") GlobalSessionObject sessionIterator) {
+                                            @Param(value = SESSION_ITERATOR) GlobalSessionObject sessionIterator) {
         Map<String, String> result = new HashMap<>();
         delimiter = InputsUtils.getInputDefaultValue(delimiter, Constants.DEFAULT_DELIMITER);
         List<String> listStrings = Arrays.asList(list.split(delimiter));
 
         return result;
-    }
     }
 }
