@@ -17,6 +17,8 @@ import io.cloudslang.content.ssh.utils.Constants;
 
 import java.util.Map;
 
+import io.cloudslang.scala.content.ssh.actions.SSHShellCommandAction2;
+
 /**
  * The operation executes a Shell command(s) on the remote machine using the SSH protocol.
  *
@@ -130,6 +132,7 @@ public class SSHShellCommandAction {
         sshShellInputs.setProxyPassword(proxyPassword);
         sshShellInputs.setAllowExpectCommands(allowExpectCommands);
 
+        String a = new SSHShellCommandAction2().mySpecialSnowFlake();
         return new ScoreSSHShellCommand().execute(sshShellInputs);
     }
 }
