@@ -6,50 +6,50 @@ import java.nio.file.{Path, Paths}
   * Created by victor on 12/14/16.
   */
 object Constants {
-  val EMPTY_STRING = ""
+  final val EMPTY_STRING = ""
   // inputs
-  val PRIVATE_KEY_DATA = "privateKeyData"
-  val PRIVATE_KEY_FILE = "privateKeyFile"
-  val COMMAND = "command"
-  val ARGS = "arguments"
-  val PTY = "pty"
-  val SSH_SESSIONS_DEFAULT_ID = "sshSessions:default-id"
-  val CLOSE_SESSION = "closeSession"
-  val KNOWN_HOSTS_POLICY = "knownHostsPolicy"
-  val KNOWN_HOSTS_PATH = "knownHostsPath"
-  val ALLOWED_CIPHERS = "allowedCiphers"
-  val ALLOW_EXPECT_COMMANDS = "allowExpectCommands"
-  val PROXY_HOST = "proxyHost"
-  val PROXY_PORT = "proxyPort"
-  val PROXY_USERNAME = "proxyUsername"
-  val PROXY_PASSWORD = "proxyPassword"
-  val CONNECT_TIMEOUT = "connectTimeout"
-  // outputs
-  val STDOUT = "STDOUT"
-  val STDERR = "STDERR"
-  val EXIT_STATUS = "exitStatus"
-  // default values
-  val DEFAULT_PORT = 22
-  val DEFAULT_PROXY_PORT = 8080
-  val DEFAULT_ALLOW_EXPECT_COMMANDS = false
-  val DEFAULT_TIMEOUT = 90000 //90 seconds
-  val DEFAULT_CONNECT_TIMEOUT = 10000 //10 seconds
-  val DEFAULT_USE_PSEUDO_TERMINAL = false
-  val DEFAULT_USE_AGENT_FORWARDING = false
-  val DEFAULT_NEWLINE = "\\n"
-  val DEFAULT_CHARACTER_SET = "UTF-8"
-  val DEFAULT_CLOSE_SESSION = false
-  val DEFAULT_KNOWN_HOSTS_POLICY = "allow"
-  val DEFAULT_KNOWN_HOSTS_PATH: Path = Paths.get(System.getProperty("user.home"), ".ssh", "known_hosts")
-  val ARGS_IS_DEPRECATED = "This input is deprecated, use the command input to provide arguments."
+  final val PRIVATE_KEY_DATA = "privateKeyData"
+  final val PRIVATE_KEY_FILE = "privateKeyFile"
+  final val COMMAND = "command"
+  final val ARGS = "arguments"
+  final val PTY = "pty"
+  final val SSH_SESSIONS_DEFAULT_ID = "sshSessions:default-id"
+  final val CLOSE_SESSION = "closeSession"
+  final val KNOWN_HOSTS_POLICY = "knownHostsPolicy"
+  final val KNOWN_HOSTS_PATH = "knownHostsPath"
+  final val ALLOWED_CIPHERS = "allowedCiphers"
+  final val ALLOW_EXPECT_COMMANDS = "allowExpectCommands"
+  final val PROXY_HOST = "proxyHost"
+  final val PROXY_PORT = "proxyPort"
+  final val PROXY_USERNAME = "proxyUsername"
+  final val PROXY_PASSWORD = "proxyPassword"
+  final val CONNECT_TIMEOUT = "connectTimeout"
+   // outputs
+  final val STDOUT = "STDOUT"
+  final val STDERR = "STDERR"
+  final val EXIT_STATUS = "exitStatus"
+   // default values
+  final val DEFAULT_PORT = 22
+  final val DEFAULT_PROXY_PORT = 8080
+  final val DEFAULT_ALLOW_EXPECT_COMMANDS = false
+  final val DEFAULT_TIMEOUT = 90000 //90 seconds
+  final val DEFAULT_CONNECT_TIMEOUT = 10000 //10 seconds
+  final val DEFAULT_USE_PSEUDO_TERMINAL = false
+  final val DEFAULT_USE_AGENT_FORWARDING = false
+  final val DEFAULT_NEWLINE = "\\n"
+  final val DEFAULT_CHARACTER_SET = "UTF-8"
+  final val DEFAULT_CLOSE_SESSION = false
+  final val DEFAULT_KNOWN_HOSTS_POLICY = "allow"
+  final val DEFAULT_KNOWN_HOSTS_PATH: Path = Paths.get(System.getProperty("user.home"), ".ssh", "known_hosts")
+  final val ARGS_IS_DEPRECATED = "This input is deprecated, use the command input to provide arguments."
 }
 
 object InputNames {
-  val HOST = "host"
-  val PORT = "port"
-  val USERNAME = "username"
-  val PASSWORD = "password"
-  val CHARACTER_SET = "characterSet"
-  val TIMEOUT = "timeout"
-  val AGENT_FORWARDING = "agentForwarding"
+  final val HOST = "host"
+  final val PORT = "port"
+  final val USERNAME = "username"
+  final val PASSWORD = "password"
+  final val CHARACTER_SET = "characterSet"
+  final val TIMEOUT = "timeout"
+  final val AGENT_FORWARDING = "agentForwarding"
 }

@@ -5,8 +5,10 @@ import java.util
 import com.hp.oo.sdk.content.annotations.{Action, Output, Param, Response}
 import com.hp.oo.sdk.content.plugin.ActionMetadata.{MatchType, ResponseType}
 import com.hp.oo.sdk.content.plugin.GlobalSessionObject
-import io.cloudslang.content.constants.{ResponseNames, ReturnCodes}
+import io.cloudslang.content.constants.{OutputNames, ResponseNames, ReturnCodes}
 import io.cloudslang.content.ssh.entities.SSHConnection
+import io.cloudslang.content.utils.{BooleanUtilities, NumberUtilities, StringUtilities}
+import io.cloudslang.scala.content.ssh.entities.SSHShellInputs
 import io.cloudslang.scala.content.ssh.utils.{Constants, InputNames}
 
 /**
@@ -56,16 +58,16 @@ class SSHShellCommandAction2 {
     */
   @Action(name = "SSH Command Scala",
           outputs = Array(
-            new Output(Constants.RETURN_CODE),
-            new Output(RETURN_RESULT),
-            new Output(EXCEPTION),
-            new Output(STDOUT),
-            new Output(STDERR),
-            new Output(EXIT_STATUS)),
+            new Output(OutputNames.RETURN_CODE),
+            new Output(OutputNames.RETURN_RESULT),
+            new Output(OutputNames.EXCEPTION),
+            new Output(Constants.STDOUT),
+            new Output(Constants.STDERR),
+            new Output(Constants.EXIT_STATUS)),
           responses = Array(
-            new Response(text = ResponseNames.SUCCESS, field = RETURN_CODE, value = ReturnCodes.SUCCESS,
+            new Response(text = ResponseNames.SUCCESS, field = OutputNames.RETURN_CODE, value = ReturnCodes.SUCCESS,
                          matchType = MatchType.COMPARE_EQUAL, responseType = ResponseType.RESOLVED),
-            new Response(text = ResponseNames.FAILURE, field = RETURN_CODE, value = ReturnCodes.FAILURE,
+            new Response(text = ResponseNames.FAILURE, field = OutputNames.RETURN_CODE, value = ReturnCodes.FAILURE,
                          matchType = MatchType.COMPARE_EQUAL, responseType = ResponseType.ERROR, isOnFail = true)
           ))
   def execute(@Param(value = InputNames.HOST, required = true) host: String,
@@ -84,18 +86,40 @@ class SSHShellCommandAction2 {
               @Param(value = InputNames.AGENT_FORWARDING) agentForwarding: String,
               @Param(InputNames.TIMEOUT) timeout: String,
               @Param(Constants.CONNECT_TIMEOUT) connectTimeout: String,
-              @Param(Constants.SSH_SESSIONS_DEFAULT_ID) globalSessionObject: GlobalSessionObject[util.Map[String, SSHConnection]],
+              @Param(
+                Constants.SSH_SESSIONS_DEFAULT_ID) globalSessionObject: GlobalSessionObject[util.Map[String, SSHConnection]],
               @Param(Constants.CLOSE_SESSION) closeSession: String,
               @Param(Constants.PROXY_HOST) proxyHost: String,
               @Param(Constants.PROXY_PORT) proxyPort: String,
               @Param(Constants.PROXY_USERNAME) proxyUsername: String,
               @Param(value = Constants.PROXY_PASSWORD, encrypted = true) proxyPassword: String,
               @Param(Constants.ALLOW_EXPECT_COMMANDS) allowExpectCommands: String): util.Map[String, String] = {
+
+    val inputs = SSHShellInputs(host = host,
+                                port = port,
+                                username = username,
+                                password = password,
+                                privateKeyFile = privateKeyFile,
+                                command = command,
+                                arguments = arguments,
+                                characterSet = characterSet,
+                                pty = pty,
+                                timeout = timeout,
+                                sshGlobalSessionObject = globalSessionObject,
+                                closeSession = closeSession,
+                                knownHostsPolicy = knownHostsPolicy,
+                                knownHostsPath = knownHostsPath,
+                                agentForwarding = agentForwarding,
+                                proxyHost = proxyHost,
+                                proxyPort = proxyPort,
+                                proxyUsername = proxyUsername,
+                                proxyPassword = proxyPassword,
+                                privateKeyData = privateKeyData,
+                                allowedCiphers = allowedCiphers,
+                                allowExpectCommands = BooleanUtilities.toBoolean(allowExpectCommands, Constants.DEFAULT_ALLOW_EXPECT_COMMANDS),
+                                connectTimeout = NumberUtilities.toInteger(connectTimeout, 0))
     new util.HashMap[String, String]()
   }
 
-  def mySpecialSnowFlake(): String = {
-    return "a"
-  }
 
 }

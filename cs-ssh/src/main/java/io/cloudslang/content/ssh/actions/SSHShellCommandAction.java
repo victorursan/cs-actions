@@ -132,7 +132,6 @@ public class SSHShellCommandAction {
         sshShellInputs.setProxyPassword(proxyPassword);
         sshShellInputs.setAllowExpectCommands(allowExpectCommands);
 
-        String a = new SSHShellCommandAction2().mySpecialSnowFlake();
         return new ScoreSSHShellCommand().execute(sshShellInputs);
     }
 }
