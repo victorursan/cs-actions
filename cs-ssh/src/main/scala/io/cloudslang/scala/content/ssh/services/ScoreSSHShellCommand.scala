@@ -1,12 +1,16 @@
 package io.cloudslang.scala.content.ssh.services
 
-import io.cloudslang.content.ssh.services.actions.SSHShellAbstract
-import io.cloudslang.scala.content.ssh.entities.SSHShellInputs
 import java.util
 
-import io.cloudslang.content.ssh.utils.StringUtils
-import io.cloudslang.content.utils.StringUtilities
+import io.cloudslang.content.constants.{OutputNames, ReturnCodes}
+import io.cloudslang.content.ssh.entities.{CommandResult, ConnectionDetails, KnownHostsFile}
+import io.cloudslang.content.ssh.services.SSHService
+import io.cloudslang.content.ssh.services.actions.SSHShellAbstract
+import io.cloudslang.content.ssh.services.impl.SSHServiceImpl
+import io.cloudslang.content.ssh.utils.{IdentityKeyUtils, ProxyUtils, StringUtils}
+import io.cloudslang.scala.content.ssh.entities.SSHShellInputs
 import io.cloudslang.scala.content.ssh.utils.Constants
+
 /**
   * Created by victor on 12/15/16.
   */
@@ -14,38 +18,31 @@ class ScoreSSHShellCommand extends SSHShellAbstract {
   def execute(sshShellInputs: SSHShellInputs): util.Map[String, String] = {
     val returnResult = new util.HashMap[String, String]
     var service = null
-    val providerAdded = addSecurityProvider
+    val providerAdded = addSecurityProvider()
     var sessionId = ""
-    try
-      if (sshShellInputs.command.isEmpty) throw new RuntimeException(SSHShellAbstract.COMMAND_IS_NOT_SPECIFIED_MESSAGE)
-      if (sshShellInputs.arguments.nonEmpty) sshShellInputs.setCommand(sshShellInputs.getCommand + " " + sshShellInputs.getArguments)
-      val portNumber = StringUtils.toInt(sshShellInputs.getPort, Constants.DEFAULT_PORT)
-      val knownHostsPolicy = StringUtils.toNotEmptyString(sshShellInputs.getKnownHostsPolicy,
-                                                          Constants.DEFAULT_KNOWN_HOSTS_POLICY)
-      val knownHostsPath = StringUtils.toPath(sshShellInputs.getKnownHostsPath,
-                                              Constants.DEFAULT_KNOWN_HOSTS_PATH)
-      sessionId = "sshSession:" + sshShellInputs.getHost + "-" + portNumber + "-" + sshShellInputs.getUsername
+    try {
+      sessionId = "sshSession:" + sshShellInputs.host + "-" + sshShellInputs.port + "-" + sshShellInputs.username
       // configure ssh parameters
-      val connection = new ConnectionDetails(sshShellInputs.getHost, portNumber,
-                                             sshShellInputs.getUsername, sshShellInputs.getPassword)
-      val identityKey = IdentityKeyUtils.getIdentityKey(sshShellInputs.getPrivateKeyFile,
-                                                        sshShellInputs.getPrivateKeyData,
-                                                        sshShellInputs.getPassword)
-      val knownHostsFile = new KnownHostsFile(knownHostsPath, knownHostsPolicy)
+      val connection = new ConnectionDetails(sshShellInputs.host, sshShellInputs.port,
+                                             sshShellInputs.username, sshShellInputs.password)
+      val identityKey = IdentityKeyUtils.getIdentityKey(sshShellInputs.privateKeyFile,
+                                                        sshShellInputs.privateKeyData,
+                                                        sshShellInputs.password)
+      val knownHostsFile = new KnownHostsFile(sshShellInputs.knownHostsPath, sshShellInputs.knownHostsPolicy)
       // get the cached SSH session
       service = getSshServiceFromCache(sshShellInputs, sessionId)
       var saveSSHSession = false
       if (service == null || !service.isConnected) {
         saveSSHSession = true
-        val proxyHTTP = ProxyUtils.getHTTPProxy(sshShellInputs.getProxyHost, sshShellInputs.getProxyPort,
-                                                sshShellInputs.getProxyUsername,
-                                                sshShellInputs.getProxyPassword)
-        service = new SSHServiceImpl(connection, identityKey, knownHostsFile, sshShellInputs.getConnectTimeout,
-                                     sshShellInputs.isAllowExpectCommands, proxyHTTP, sshShellInputs.getAllowedCiphers)
+        val proxyHTTP = ProxyUtils.getHTTPProxy(sshShellInputs.proxyHost, sshShellInputs.proxyPort,
+                                                sshShellInputs.proxyUsername,
+                                                sshShellInputs.proxyPassword)
+        service = new SSHServiceImpl(connection, identityKey, knownHostsFile, sshShellInputs.connectTimeout,
+                                     sshShellInputs.allowExpectCommands, proxyHTTP, sshShellInputs.allowedCiphers)
       }
       runSSHCommand(sshShellInputs, returnResult, service, sessionId, saveSSHSession)
 
-    catch {
+    } catch {
       case e: Exception => {
         if (service != null) cleanupService(sshShellInputs, service, sessionId)
         populateResult(returnResult, e)
@@ -60,16 +57,14 @@ class ScoreSSHShellCommand extends SSHShellAbstract {
   }
 
   private def runSSHCommand(sshShellInputs: SSHShellInputs, returnResult: util.Map[String, String], service: SSHService, sessionId: String, saveSSHSession: Boolean) {
-    val timeoutNumber = StringUtils.toInt(sshShellInputs.getTimeout, Constants.DEFAULT_TIMEOUT)
-    val usePseudoTerminal = StringUtils.toBoolean(sshShellInputs.getPty, Constants.DEFAULT_USE_PSEUDO_TERMINAL)
-    val agentForwarding = StringUtils.toBoolean(sshShellInputs.getAgentForwarding,
+    val timeoutNumber = StringUtils.toInt(sshShellInputs.timeout, Constants.DEFAULT_TIMEOUT)
+    val usePseudoTerminal = StringUtils.toBoolean(sshShellInputs.pty, Constants.DEFAULT_USE_PSEUDO_TERMINAL)
+    val agentForwarding = StringUtils.toBoolean(sshShellInputs.agentForwarding,
                                                 Constants.DEFAULT_USE_AGENT_FORWARDING)
-    sshShellInputs.setCharacterSet(
-      StringUtils.toNotEmptyString(sshShellInputs.getCharacterSet, Constants.DEFAULT_CHARACTER_SET))
     // run the SSH command
-    val commandResult = service.runShellCommand(sshShellInputs.getCommand,
-                                                sshShellInputs.getCharacterSet, usePseudoTerminal,
-                                                sshShellInputs.getConnectTimeout, timeoutNumber,
+    val commandResult = service.runShellCommand(sshShellInputs.command,
+                                                sshShellInputs.characterSet, usePseudoTerminal,
+                                                sshShellInputs.connectTimeout, timeoutNumber,
                                                 agentForwarding)
     handleSessionClosure(sshShellInputs, service, sessionId, saveSSHSession)
     // populate the results
@@ -77,19 +72,19 @@ class ScoreSSHShellCommand extends SSHShellAbstract {
   }
 
   private def handleSessionClosure(sshShellInputs: SSHShellInputs, service: SSHService, sessionId: String, saveSSHSession: Boolean) {
-    val closeSessionBoolean = StringUtils.toBoolean(sshShellInputs.getCloseSession,
+    val closeSessionBoolean = StringUtils.toBoolean(sshShellInputs.closeSession,
                                                     Constants.DEFAULT_CLOSE_SESSION)
     if (closeSessionBoolean) cleanupService(sshShellInputs, service, sessionId)
     else if (saveSSHSession) {
       // save SSH session in the cache
-      val saved = saveToCache(sshShellInputs.getSshGlobalSessionObject, service, sessionId)
+      val saved = saveToCache(sshShellInputs.sshGlobalSessionObject, service, sessionId)
       if (!saved) throw new RuntimeException("The SSH session could not be saved in the given sessionParam.")
     }
   }
 
   protected def cleanupService(sshShellInputs: SSHShellInputs, service: SSHService, sessionId: String) {
     service.close()
-    service.removeFromCache(sshShellInputs.getSshGlobalSessionObject, sessionId)
+    service.removeFromCache(sshShellInputs.sshGlobalSessionObject, sessionId)
   }
 
   private def populateResult(returnResult: util.Map[String, String], commandResult: CommandResult) {

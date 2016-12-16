@@ -1,5 +1,6 @@
 package io.cloudslang.scala.content.ssh.entities
 
+import java.nio.file.Path
 import java.util
 
 import com.hp.oo.sdk.content.plugin.GlobalSessionObject
@@ -10,7 +11,7 @@ import io.cloudslang.content.ssh.entities.SSHConnection
   */
 
 case class SSHShellInputs(host: String,
-                          port: String,
+                          port: Int,
                           username: String,
                           password: String,
                           privateKeyFile: String,
@@ -22,7 +23,7 @@ case class SSHShellInputs(host: String,
                           sshGlobalSessionObject: GlobalSessionObject[util.Map[String, SSHConnection]],
                           closeSession: String,
                           knownHostsPolicy: String,
-                          knownHostsPath: String,
+                          knownHostsPath: Path,
                           agentForwarding: String,
                           proxyHost: String,
                           proxyPort: String,
