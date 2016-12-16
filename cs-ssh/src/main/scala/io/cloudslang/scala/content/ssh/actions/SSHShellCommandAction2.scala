@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils
 /**
   * Created by victor on 12/13/16.
   */
-class SSHShellCommandAction2 {
+object SSHShellCommandAction2 {
 
   /**
     * Executes a Shell command(s) on the remote machine using the SSH protocol.
@@ -70,9 +70,9 @@ class SSHShellCommandAction2 {
             new Output(Constants.EXIT_STATUS)),
           responses = Array(
             new Response(text = ResponseNames.SUCCESS, field = OutputNames.RETURN_CODE, value = ReturnCodes.SUCCESS,
-                         matchType = MatchType.COMPARE_EQUAL, responseType = ResponseType.RESOLVED),
+              matchType = MatchType.COMPARE_EQUAL, responseType = ResponseType.RESOLVED),
             new Response(text = ResponseNames.FAILURE, field = OutputNames.RETURN_CODE, value = ReturnCodes.FAILURE,
-                         matchType = MatchType.COMPARE_EQUAL, responseType = ResponseType.ERROR, isOnFail = true)
+              matchType = MatchType.COMPARE_EQUAL, responseType = ResponseType.ERROR, isOnFail = true)
           ))
   def execute(@Param(value = InputNames.HOST, required = true) host: String,
               @Param(InputNames.PORT) port: String,
@@ -108,16 +108,13 @@ class SSHShellCommandAction2 {
                                 privateKeyFile = privateKeyFile,
                                 command = command,
                                 arguments = if (arguments.isEmpty) arguments else command + " " + arguments,
-                                characterSet = StringUtils.defaultIfEmpty(characterSet,
-                                                                          Constants.DEFAULT_CHARACTER_SET),
+                                characterSet = StringUtils.defaultIfEmpty(characterSet, Constants.DEFAULT_CHARACTER_SET),
                                 pty = pty,
                                 timeout = timeout,
                                 sshGlobalSessionObject = globalSessionObject,
                                 closeSession = closeSession,
-                                knownHostsPolicy = StringUtils.defaultIfEmpty(knownHostsPolicy,
-                                                                              Constants.DEFAULT_KNOWN_HOSTS_POLICY),
-                                knownHostsPath = if (knownHostsPath.isEmpty) Constants.DEFAULT_KNOWN_HOSTS_PATH else
-                                  Paths.get(knownHostsPath),
+                                knownHostsPolicy = StringUtils.defaultIfEmpty(knownHostsPolicy, Constants.DEFAULT_KNOWN_HOSTS_POLICY),
+                                knownHostsPath = if (knownHostsPath.isEmpty) Constants.DEFAULT_KNOWN_HOSTS_PATH else Paths.get(knownHostsPath),
                                 agentForwarding = agentForwarding,
                                 proxyHost = proxyHost,
                                 proxyPort = proxyPort,
@@ -125,11 +122,10 @@ class SSHShellCommandAction2 {
                                 proxyPassword = proxyPassword,
                                 privateKeyData = privateKeyData,
                                 allowedCiphers = allowedCiphers,
-                                allowExpectCommands = BooleanUtilities.toBoolean(allowExpectCommands,
-                                                                                 Constants.DEFAULT_ALLOW_EXPECT_COMMANDS),
+                                allowExpectCommands = BooleanUtilities.toBoolean(allowExpectCommands, Constants.DEFAULT_ALLOW_EXPECT_COMMANDS),
                                 connectTimeout = NumberUtilities.toInteger(connectTimeout, 0))
-    val resultMap = new ScoreSSHShellCommand().execute(inputs)
-    new util.HashMap[String, String]()
+
+    new ScoreSSHShellCommand().execute(inputs)
   }
 
 
