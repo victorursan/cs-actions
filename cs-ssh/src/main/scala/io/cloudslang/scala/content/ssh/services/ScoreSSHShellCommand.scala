@@ -22,6 +22,8 @@ class ScoreSSHShellCommand extends SSHShellAbstract {
     var service: SSHService = null
     val providerAdded = addSecurityProvider()
     val sessionId = s"sshSession:${sshShellInputs.host}-${sshShellInputs.port}-${sshShellInputs.username}"
+
+
     try {
       // configure ssh parameters
       val connection = new ConnectionDetails(sshShellInputs.host, sshShellInputs.port,
